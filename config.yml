@@ -1,0 +1,56 @@
+subreddits:
+  - WorkFromHome
+  - RemoteWork
+  - antiwork
+
+date_range:
+  start: "2020-01-01"
+  end: "2025-10-10"
+
+paths:
+  raw: data/raw
+  processed: data/processed
+  keywords: ref/keywords.csv
+
+  # existing monthly concept timeseries output
+  ts_out: out/tables/concept_timeseries.parquet
+  figs_out: out/figs
+
+  # canonical tables
+  events_canonical: out/tables/events_canonical.parquet
+  docs_canonical: out/tables/docs_canonical.parquet
+
+  # weekly STL outputs 
+  stl_weekly_figs_dir: out/stl_weekly
+  stl_weekly_summary: out/stl_weekly/stl_weekly_summary.csv
+  stl_weekly_components: out/stl_weekly/stl_weekly_components.parquet
+
+  concept_weekly: out/tables/concept_timeseries_weekly.parquet
+
+  # scan for raw jsonl/parquet when building canonical tables
+  scan_roots:
+    - "C:/Users/raypo/Capstone"
+    - "C:/Users/raypo/Capstone/data/raw"
+
+analysis:
+  stl_weekly:
+    input: ${paths.events_canonical}
+    outputs:
+      figs_dir: ${paths.stl_weekly_figs_dir}
+      summary_csv: ${paths.stl_weekly_summary}
+      components_parquet: ${paths.stl_weekly_components}
+    params:
+      # decomposition settings
+      freq: W-MON
+      period: 52
+      seasonal: 25
+      trend: 53          
+      robust: true
+      suffix: "2"
+
+      # handling partial/missing weeks
+      min_days_per_week: 4
+      exposure_adjust: true
+      impute_for_plot: true
+      shade_imputed: true
+      
